@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e3a2b">
+  <meta name="description" content="DINA — prêt-à-porter masculin. Découvrez notre collection et retrouvez nos boutiques à Chéraga, Draria et Douera. Livraison dans les 58 wilayas.">
+  <title>DINA — La mode se démode, le style jamais</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { forest: '#1e3a2b', ink: '#191a17', paper: '#f7f5ef', brass: '#ad8b54', muted: '#77786f' },
+      fontFamily: { sans: ['DM Sans','sans-serif'], serif: ['Playfair Display','serif'] }
+    }}}
+  </script>
+  <style>
+    :root{--forest:#1e3a2b;--paper:#f7f5ef;--ink:#191a17;--brass:#ad8b54}
+    html{scroll-behavior:smooth;scroll-padding-top:100px}
+    body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink)}
+    .serif{font-family:'Playfair Display',serif}
+    .announcement{letter-spacing:.08em}
+    .nav-link{position:relative}
+    .nav-link:after{content:'';position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--brass);transition:width .25s}
+    .nav-link:hover:after{width:100%}
+    .product-image{transition:transform .55s cubic-bezier(.2,.65,.3,1)}
+    .product-card:hover .product-image{transform:scale(1.045)}
+    .filter-btn{white-space:nowrap;transition:all .2s}
+    .filter-btn.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+    .drawer-backdrop{opacity:0;pointer-events:none;transition:opacity .25s}
+    .drawer-backdrop.open{opacity:1;pointer-events:auto}
+    .cart-drawer{transform:translateX(100%);transition:transform .3s ease}
+    .cart-drawer.open{transform:translateX(0)}
+    .modal{opacity:0;pointer-events:none;transition:opacity .2s}
+    .modal.open{opacity:1;pointer-events:auto}
+    .field{width:100%;border:1px solid #d8d5cc;background:#fff;padding:12px 13px;outline:none;border-radius:2px}
+    .field:focus{border-color:var(--forest);box-shadow:0 0 0 2px #1e3a2b12}
+    .btn-primary{background:var(--forest);color:#fff;transition:background .2s}
+    .btn-primary:hover{background:#294b38}
+    .btn-outline{border:1px solid #aaa79d;transition:all .2s}
+    .btn-outline:hover{border-color:var(--forest);color:var(--forest)}
+    .toast{transform:translateY(15px);opacity:0;transition:all .25s;pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="bg-forest text-white text-center text-[10px] sm:text-xs py-2 px-3 announcement">
+    LIVRAISON DANS LES 58 WILAYAS <span class="text-brass mx-2">•</span> CONTACT : <a href="tel:0551750197" class="hover:underline">05 51 75 01 97</a>
+  </div>
+  <header class="sticky top-0 z-40 bg-paper/95 backdrop-blur-sm border-b border-black/10">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-8">
+      <div class="h-[76px] flex items-center justify-between gap-4">
+        <button class="md:hidden p-2" id="mobileMenuBtn" aria-label="Ouvrir le menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
+        <a href="#" class="leading-none text-center shrink-0" aria-label="DINA accueil">
+          <span class="block serif text-[32px] sm:text-[36px] tracking-[.18em] font-semibold">DINA</span>
+          <span class="block text-[8px] tracking-[.28em] mt-1">PRÊT-À-PORTER HOMME</span>
+        </a>
+        <nav class="hidden xl:flex items-center gap-4 text-[13px] tracking-wide">
+          <a class="nav-link" href="#collection">Nouvelle collection</a>
+          <a class="nav-link" href="#boutiques">Nos boutiques</a>
+          <a class="nav-link" href="#collection" data-nav-filter="pantalons">Pantalons & jeans</a>
+          <a class="nav-link" href="#collection" data-nav-filter="chemises">Chemises</a>
+          <a class="nav-link" href="#collection" data-nav-filter="tshirts">T-shirts & polos</a>
+          <a class="nav-link" href="#collection" data-nav-filter="vestes">Vestes & costumes</a>
+          <a class="nav-link" href="#collection" data-nav-filter="ensembles">Ensembles & survêtements</a>
+        </nav>
+        <div class="flex items-center gap-2 sm:gap-4">
+          <form id="searchForm" class="hidden lg:flex items-center border-b border-black/30 pb-1 gap-2">
+            <input id="searchInput" type="search" placeholder="Rechercher un article" class="bg-transparent text-xs outline-none w-36" aria-label="Rechercher un article">
+            <button aria-label="Rechercher" type="submit"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button>
+          </form>
+          <button id="mobileSearchBtn" class="lg:hidden p-2" aria-label="Rechercher"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></button>
+          <button id="openCartBtn" class="relative p-2 flex items-center gap-2" aria-label="Ouvrir le panier">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h16l-1.4 12H5.4L4 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+            <span class="hidden sm:inline text-xs">Panier</span><span id="cartBadge" class="absolute -top-0.5 -right-0.5 bg-brass text-white text-[9px] min-w-[17px] h-[17px] rounded-full flex items-center justify-center">0</span>
+          </button>
+        </div>
+      </div>
+      <form id="mobileSearchForm" class="hidden pb-4 lg:hidden"><input id="mobileSearchInput" type="search" class="field text-sm" placeholder="Rechercher un article…"></form>
+      <nav id="mobileMenu" class="hidden md:hidden pb-5 pt-1 border-t border-black/10">
+        <div class="grid grid-cols-2 gap-4 text-sm py-3">
+          <a href="#collection">Nouvelle collection</a><a href="#boutiques">Nos boutiques</a>
+          <a href="#collection" data-nav-filter="pantalons">Pantalons & jeans</a><a href="#collection" data-nav-filter="chemises">Chemises</a>
+          <a href="#collection" data-nav-filter="tshirts">T-shirts & polos</a><a href="#collection" data-nav-filter="vestes">Vestes & costumes</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative min-h-[600px] md:min-h-[690px] flex items-end bg-[#292b25] overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=2200&q=88" alt="Style masculin élégant dans des tons neutres" class="absolute inset-0 w-full h-full object-cover object-center" fetchpriority="high">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-black/5"></div>
+      <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-12 lg:px-20 pb-16 md:pb-24 pt-28 text-white">
+        <p class="text-[10px] sm:text-xs tracking-[.3em] uppercase mb-5 text-[#e1c99f]">DINA · L’élégance au quotidien</p>
+        <h1 class="serif text-5xl sm:text-6xl lg:text-7xl max-w-3xl leading-[1.06] font-medium">La mode se démode,<br><em class="font-normal">le style jamais !</em></h1>
+        <p class="mt-6 text-sm sm:text-base text-white/80 max-w-md leading-7">Des essentiels bien choisis, des coupes contemporaines et une allure qui vous ressemble.</p>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a href="#collection" class="btn-primary px-6 py-3.5 text-xs tracking-wide">Découvrir la collection <span class="ml-3">↗</span></a>
+          <a href="#boutiques" class="border border-white/60 hover:bg-white hover:text-ink px-6 py-3.5 text-xs tracking-wide transition">Nos boutiques</a>
+        </div>
+      </div>
+      <div class="absolute bottom-6 right-6 sm:right-12 text-white/75 text-[9px] tracking-[.2em] hidden sm:block">COLLECTION HOMME · DINA</div>
+    </section>
+
+    <section class="border-b border-black/10 bg-white">
+      <div class="max-w-[1440px] mx-auto px-5 sm:px-10 py-5 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 text-center">
+        <div class="flex items-center justify-center gap-3"><span class="text-brass text-xl">✳</span><div class="text-left"><p class="text-xs font-semibold">Livraison nationale</p><p class="text-[11px] text-muted mt-1">Dans les 58 wilayas</p></div></div>
+        <div class="flex items-center justify-center gap-3"><span class="text-brass text-xl">◇</span><div class="text-left"><p class="text-xs font-semibold">Paiement à la livraison</p><p class="text-[11px] text-muted mt-1">Commandez en toute simplicité</p></div></div>
+        <div class="flex items-center justify-center gap-3"><span class="text-brass text-xl">⌂</span><div class="text-left"><p class="text-xs font-semibold">3 boutiques à Alger</p><p class="text-[11px] text-muted mt-1">Chéraga · Draria · Douera</p></div></div>
+      </div>
+    </section>
+
+    <section id="collection" class="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 py-16 sm:py-24">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-9">
+        <div><p class="text-[10px] tracking-[.25em] uppercase text-brass mb-3">Le vestiaire DINA</p><h2 class="serif text-4xl sm:text-5xl">La collection</h2><p class="text-sm text-muted mt-3">Des pièces pensées pour accompagner chaque moment.</p></div>
+        <p id="resultCount" class="text-xs text-muted">12 articles</p>
+      </div>
+      <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-5" id="filters" aria-label="Filtrer les produits">
+        <button class="filter-btn active border border-black/15 px-4 py-2.5 text-[11px]" data-filter="all">Tous les vêtements</button>
+        <button class="filter-btn border border-black/15 px-4 py-2.5 text-[11px]" data-filter="pantalons">Pantalons & Jeans</button>
+        <button class="filter-btn border border-black/15 px-4 py-2.5 text-[11px]" data-filter="tshirts">T-shirts & Polos</button>
+        <button class="filter-btn border border-black/15 px-4 py-2.5 text-[11px]" data-filter="chemises">Chemises</button>
+        <button class="filter-btn border border-black/15 px-4 py-2.5 text-[11px]" data-filter="vestes">Vestes & Costumes</button>
+        <button class="filter-btn border border-black/15 px-4 py-2.5 text-[11px]" data-filter="ensembles">Ensembles & Survêtements</button>
+      </div>
+      <div class="lg:hidden mb-6"><input id="catalogSearch" class="field text-sm" type="search" placeholder="Rechercher dans la collection…"></div>
+      <div id="productGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-5 gap-y-9 sm:gap-y-12"></div>
+      <div id="emptyState" class="hidden text-center py-20"><p class="serif text-2xl">Aucun article trouvé</p><p class="text-sm text-muted mt-2">Essayez un autre mot-clé ou une autre catégorie.</p><button id="resetFilters" class="btn-outline px-5 py-3 mt-5 text-xs">Réinitialiser les filtres</button></div>
+    </section>
+
+    <section id="boutiques" class="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-12 py-16 sm:py-24">
+      <div class="text-center max-w-xl mx-auto mb-12"><p class="text-[10px] tracking-[.25em] uppercase text-brass mb-3">Venez nous rencontrer</p><h2 class="serif text-4xl sm:text-5xl">Nos boutiques</h2><p class="text-sm text-muted mt-4 leading-6">Retrouvez l’univers DINA dans nos trois magasins à Alger. Notre équipe vous accueille tous les jours.</p></div>
+      <div class="grid md:grid-cols-3 gap-5">
+        <article class="bg-white border border-black/10">
+          <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80" alt="Intérieur de boutique de prêt-à-porter" class="w-full h-52 object-cover">
+          <div class="p-6"><p class="text-[10px] tracking-[.2em] uppercase text-brass">01 · Alger</p><h3 class="serif text-2xl mt-2">Chéraga</h3><p class="text-xs text-muted mt-3">Ouvert tous les jours · 09h00–22h30</p><a href="https://share.google/EEhqV98eF0LywMhWl" target="_blank" rel="noopener noreferrer" class="inline-block text-xs mt-5 border-b border-brass pb-1">Voir sur Google Maps ↗</a></div>
+        </article>
+        <article class="bg-white border border-black/10">
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=80" alt="Sélection de vêtements dans une boutique" class="w-full h-52 object-cover">
+          <div class="p-6"><p class="text-[10px] tracking-[.2em] uppercase text-brass">02 · Alger</p><h3 class="serif text-2xl mt-2">Draria</h3><p class="text-xs text-muted mt-3">Ouvert tous les jours · 09h00–22h30</p><a href="https://share.google/EEhqV98eF0LywMhWl" target="_blank" rel="noopener noreferrer" class="inline-block text-xs mt-5 border-b border-brass pb-1">Voir sur Google Maps ↗</a></div>
+        </article>
+        <article class="bg-white border border-black/10">
+          <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=900&q=80" alt="Portants de vêtements dans un magasin" class="w-full h-52 object-cover">
+          <div class="p-6"><p class="text-[10px] tracking-[.2em] uppercase text-brass">03 · Alger</p><h3 class="serif text-2xl mt-2">Douera</h3><p class="text-xs text-muted mt-3">Ouvert tous les jours · 09h00–22h30</p><a href="https://share.google/EEhqV98eF0LywMhWl" target="_blank" rel="noopener noreferrer" class="inline-block text-xs mt-5 border-b border-brass pb-1">Voir sur Google Maps ↗</a></div>
+        </article>
+      </div>
+      <p class="text-center text-[10px] text-muted mt-6">Le lien Google Maps fourni par la boutique est utilisé pour les trois points de vente. Vérifiez les adresses exactes auprès de DINA.</p>
+    </section>
+  </main>
+
+  <footer class="bg-[#171b17] text-white">
+    <div class="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-12 pt-14 pb-8">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15">
+        <div><a href="#" class="serif text-4xl tracking-[.18em]">DINA</a><p class="text-xs text-white/60 mt-4 leading-6 max-w-xs">La mode se démode, le style jamais !<br>Le vestiaire masculin, avec caractère.</p></div>
+        <div><h3 class="text-xs tracking-[.15em] uppercase text-[#d5bd91] mb-5">Explorer</h3><ul class="space-y-3 text-xs text-white/70"><li><a href="#collection" class="hover:text-white">La collection</a></li><li><a href="#collection" data-nav-filter="pantalons" class="hover:text-white">Pantalons & jeans</a></li><li><a href="#collection" data-nav-filter="chemises" class="hover:text-white">Chemises</a></li><li><a href="#boutiques" class="hover:text-white">Nos boutiques</a></li></ul></div>
+        <div><h3 class="text-xs tracking-[.15em] uppercase text-[#d5bd91] mb-5">Service client</h3><ul class="space-y-3 text-xs text-white/70"><li>Livraison dans les 58 wilayas</li><li>Paiement à la livraison</li><li><a href="tel:0551750197" class="hover:text-white">05 51 75 01 97</a></li><li><a href="https://share.google/EEhqV98eF0LywMhWl" target="_blank" rel="noopener noreferrer" class="hover:text-white">Google Maps ↗</a></li></ul></div>
+        <div><h3 class="text-xs tracking-[.15em] uppercase text-[#d5bd91] mb-5">Restez connectés</h3><p class="text-xs text-white/60 leading-6">Une question sur un article ou une commande ? Contactez directement notre équipe.</p><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" class="inline-block mt-4 text-xs border-b border-[#ad8b54] pb-1">Instagram ↗</a></div>
+      </div>
+      <div class="flex flex-col sm:flex-row justify-between gap-3 pt-6 text-[10px] text-white/45"><p>© <span id="year"></span> Les Magasins Dina. Tous droits réservés.</p><div class="flex gap-5"><a href="#" id="legalLink" class="hover:text-white">Mentions légales</a><a href="#" id="privacyLink" class="hover:text-white">Confidentialité</a></div></div>
+      <p class="text-[10px] text-white/35 mt-4 max-w-3xl leading-5">Prototype de démonstration : les produits, photos, prix et stocks sont illustratifs. Les commandes ne sont pas transmises à un système de vente réel. Les mentions légales, politiques et liens sociaux devront être remplacés/validés avant publication.</p>
+    </div>
+  </footer>
+
+  <div id="backdrop" class="drawer-backdrop fixed inset-0 z-50 bg-black/45"></div>
+  <aside id="cartDrawer" class="cart-drawer fixed right-0 top-0 z-[60] h-full w-full max-w-[470px] bg-paper shadow-2xl flex flex-col" aria-label="Votre panier" aria-modal="true" role="dialog">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-black/10"><div><p class="text-[10px] tracking-[.2em] uppercase text-brass">Votre sélection</p><h2 class="serif text-2xl mt-1">Mon panier <span id="drawerCount" class="text-muted text-base">(0)</span></h2></div><button id="closeCartBtn" class="p-2 text-2xl leading-none" aria-label="Fermer le panier">×</button></div>
+    <div id="cartItems" class="flex-1 overflow-y-auto px-6 py-3"></div>
+    <div id="cartFooter" class="border-t border-black/10 px-6 py-5">
+      <div class="flex justify-between items-center mb-4"><span class="text-sm">Sous-total</span><strong id="cartTotal" class="text-lg">0 DZD</strong></div>
+      <p class="text-[11px] text-muted mb-4">Frais de livraison à confirmer selon votre wilaya.</p>
+      <button id="checkoutBtn" class="btn-primary w-full py-4 text-xs tracking-wide disabled:opacity-40" disabled>PASSER À LA COMMANDE <span class="ml-2">→</span></button>
+      <p class="text-center text-[10px] text-muted mt-3">Paiement à la livraison</p>
+    </div>
+  </aside>
+
+  <div id="checkoutModal" class="modal fixed inset-0 z-[70] bg-black/50 flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+    <div class="bg-paper w-full max-w-2xl max-h-[94vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 bg-paper border-b border-black/10 px-5 sm:px-8 py-5 flex items-center justify-between z-10"><div><p class="text-[10px] tracking-[.2em] uppercase text-brass">Dernière étape</p><h2 id="checkoutTitle" class="serif text-2xl mt-1">Confirmer ma commande</h2></div><button id="closeCheckoutBtn" class="text-2xl p-2" aria-label="Fermer">×</button></div>
+      <form id="checkoutForm" class="px-5 sm:px-8 py-6">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="text-xs">Nom et prénom *<input required name="name" autocomplete="name" class="field mt-2" placeholder="Votre nom complet"></label>
+          <label class="text-xs">Numéro de téléphone *<input required name="phone" type="tel" inputmode="tel" autocomplete="tel" pattern="[0-9 +()-]{8,20}" class="field mt-2" placeholder="05 XX XX XX XX"></label>
+          <label class="text-xs sm:col-span-2">Wilaya de livraison *<select required name="wilaya" id="wilayaSelect" class="field mt-2"><option value="">Choisir une wilaya</option></select></label>
+          <label class="text-xs sm:col-span-2">Adresse de livraison *<input required name="address" autocomplete="street-address" class="field mt-2" placeholder="Commune, quartier, rue…"></label>
+          <label class="text-xs sm:col-span-2">Informations complémentaires (facultatif)<textarea name="notes" rows="2" class="field mt-2" placeholder="Repère, préférence de livraison…"></textarea></label>
+        </div>
+        <div class="bg-white border border-black/10 p-4 mt-6">
+          <div class="flex justify-between text-xs"><span>Articles</span><span id="checkoutItemsCount">0</span></div>
+          <div class="flex justify-between items-center mt-3"><span class="text-sm">Total des articles</span><strong id="checkoutTotal" class="text-lg">0 DZD</strong></div>
+          <p class="text-[10px] text-muted mt-2">Les frais de livraison seront confirmés par l’équipe.</p>
+        </div>
+        <label class="flex gap-3 items-start mt-5 text-xs text-muted"><input type="checkbox" required class="mt-0.5 accent-[#1e3a2b]"><span>Je confirme que mes coordonnées sont correctes et j’accepte d’être contacté(e) au sujet de cette commande.</span></label>
+        <button type="submit" class="btn-primary w-full py-4 mt-5 text-xs tracking-wide">CONFIRMER LA COMMANDE</button>
+        <p class="text-[10px] text-muted text-center mt-3">Démo uniquement : cette commande sera préparée dans votre navigateur, sans transmission automatique à DINA.</p>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirmationModal" class="modal fixed inset-0 z-[80] bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="bg-paper max-w-md w-full p-7 sm:p-9 text-center shadow-2xl">
+      <div class="w-12 h-12 rounded-full border border-brass text-brass flex items-center justify-center mx-auto text-2xl">✓</div>
+      <p class="text-[10px] tracking-[.2em] uppercase text-brass mt-5">Commande préparée</p><h2 class="serif text-3xl mt-2">Merci pour votre confiance.</h2>
+      <p id="confirmationText" class="text-sm text-muted leading-6 mt-4"></p>
+      <div id="orderSummary" class="text-left bg-white border border-black/10 p-4 mt-5 text-xs leading-6"></div>
+      <button id="closeConfirmationBtn" class="btn-primary w-full py-3.5 mt-6 text-xs">Continuer la visite</button>
+      <p class="text-[10px] text-muted mt-3">Pour une vraie commande, connectez ce formulaire à votre outil de gestion ou à WhatsApp.</p>
+    </div>
+  </div>
+  <div id="toast" class="toast fixed bottom-5 left-1/2 -translate-x-1/2 z-[90] bg-ink text-white px-5 py-3 text-xs shadow-lg"></div>
+
+  <script>
+    const products = [
+      {id:1,name:'Jean Slim Brut',category:'pantalons',label:'Pantalons & jeans',price:5900,image:'photo-1542272604-787c3835535d',tag:'Essentiel'},
+      {id:2,name:'Pantalon Cargo Olive',category:'pantalons',label:'Pantalons & jeans',price:6500,image:'photo-1473966968600-fa801b869a1a',tag:'Nouveau'},
+      {id:3,name:'Pantalon Tailoring Sable',category:'pantalons',label:'Pantalons & jeans',price:7200,image:'photo-1624378439575-d8705ad7ae80',tag:''},
+      {id:4,name:'T-shirt Essential Blanc',category:'tshirts',label:'T-shirts & polos',price:2500,image:'photo-1521572163474-6864f9cf17ab',tag:'Essentiel'},
+      {id:5,name:'T-shirt Oversize Noir',category:'tshirts',label:'T-shirts & polos',price:2900,image:'photo-1503342217505-b0a15ec3261c',tag:''},
+      {id:6,name:'Polo Piqué Vert Forêt',category:'tshirts',label:'T-shirts & polos',price:3900,image:'photo-1625910513413-5fc4c6b7a1f0',tag:'Nouveau'},
+      {id:7,name:'Chemise en Lin Écru',category:'chemises',label:'Chemises',price:4900,image:'photo-1598033129183-c4f50c736f10',tag:'Favori'},
+      {id:8,name:'Chemise Oxford Bleu',category:'chemises',label:'Chemises',price:4500,image:'photo-1603252109303-2751441dd157',tag:''},
+      {id:9,name:'Chemise Rayée Classique',category:'chemises',label:'Chemises',price:5200,image:'photo-1607345366928-199ea26cfe3e',tag:''},
+      {id:10,name:'Blazer Chic Structuré',category:'vestes',label:'Vestes & costumes',price:12900,image:'photo-1591047139829-d91aecb6caea',tag:'Sélection'},
+      {id:11,name:'Veste Casual Sable',category:'vestes',label:'Vestes & costumes',price:9900,image:'photo-1551028719-00167b16eac5',tag:''},
+      {id:12,name:'Ensemble Sportswear',category:'ensembles',label:'Ensembles & survêtements',price:8900,image:'photo-1551488831-00ddcb6c6bd3',tag:'Nouveau'},
+      {id:13,name:'Survêtement Minimal',category:'ensembles',label:'Ensembles & survêtements',price:9500,image:'photo-1556821840-3a63f95609a7',tag:''},
+      {id:14,name:'Jean Straight Bleu',category:'pantalons',label:'Pantalons & jeans',price:6100,image:'photo-1541099649105-f69ad21f3246',tag:''},
+      {id:15,name:'Polo Classique Écru',category:'tshirts',label:'T-shirts & polos',price:3500,image:'photo-1586790170083-2f9cecad732d',tag:''},
+      {id:16,name:'Costume Moderne Anthracite',category:'vestes',label:'Vestes & costumes',price:18900,image:'photo-1592878904946-b3cd8ae243d0',tag:'Élégance'}
+    ];
+    const sizes=['S','M','L','XL','XXL'];
+    const wilayas=[
+      '01 - Adrar','02 - Chlef','03 - Laghouat','04 - Oum El Bouaghi','05 - Batna','06 - Béjaïa','07 - Biskra','08 - Béchar','09 - Blida','10 - Bouira','11 - Tamanrasset','12 - Tébessa','13 - Tlemcen','14 - Tiaret','15 - Tizi Ouzou','16 - Alger','17 - Djelfa','18 - Jijel','19 - Sétif','20 - Saïda','21 - Skikda','22 - Sidi Bel Abbès','23 - Annaba','24 - Guelma','25 - Constantine','26 - Médéa','27 - Mostaganem','28 - M’Sila','29 - Mascara','30 - Ouargla','31 - Oran','32 - El Bayadh','33 - Illizi','34 - Bordj Bou Arréridj','35 - Boumerdès','36 - El Tarf','37 - Tindouf','38 - Tissemsilt','39 - El Oued','40 - Khenchela','41 - Souk Ahras','42 - Tipaza','43 - Mila','44 - Aïn Defla','45 - Naâma','46 - Aïn Témouchent','47 - Ghardaïa','48 - Relizane','49 - Timimoun','50 - Bordj Badji Mokhtar','51 - Ouled Djellal','52 - Béni Abbès','53 - In Salah','54 - In Guezzam','55 - Touggourt','56 - Djanet','57 - El M’Ghair','58 - El Meniaa'
+    ];
+    let activeFilter='all', searchTerm='', cart=[], toastTimer;
+    const $=s=>document.querySelector(s);
+    const money=n=>new Intl.NumberFormat('fr-DZ').format(n)+' DZD';
+    const imgUrl=(id)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=750&q=82`;
+    function renderProducts(){
+      const shown=products.filter(p=>(activeFilter==='all'||p.category===activeFilter)&&(`${p.name} ${p.label} ${p.tag}`.toLowerCase().includes(searchTerm.toLowerCase())));
+      $('#productGrid').innerHTML=shown.map(p=>`<article class="product-card group min-w-0">
+        <div class="relative overflow-hidden bg-[#e9e6dd] aspect-[3/4]">
+          <img class="product-image w-full h-full object-cover" loading="lazy" src="${imgUrl(p.image)}" alt="${p.name}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=750&q=80'">
+          ${p.tag?`<span class="absolute top-3 left-3 bg-paper/95 px-2.5 py-1 text-[9px] tracking-wide uppercase">${p.tag}</span>`:''}
+          <button type="button" class="quick-add absolute bottom-3 right-3 bg-paper w-10 h-10 rounded-full flex items-center justify-center shadow-sm hover:bg-forest hover:text-white transition" data-add="${p.id}" aria-label="Ajouter ${p.name} au panier">＋</button>
+        </div>
+        <p class="text-[9px] sm:text-[10px] uppercase tracking-[.13em] text-muted mt-4">${p.label}</p>
+        <h3 class="text-xs sm:text-sm font-medium mt-1.5 leading-5">${p.name}</h3>
+        <p class="text-sm font-semibold mt-2">${money(p.price)}</p>
+        <div class="mt-3 flex gap-1.5 items-center"><label for="size-${p.id}" class="text-[10px] text-muted">Taille</label><select id="size-${p.id}" class="size-select bg-transparent border border-black/15 px-2 py-1.5 text-[10px] flex-1 max-w-[110px]" aria-label="Taille pour ${p.name}">${sizes.map(s=>`<option value="${s}" ${s==='M'?'selected':''}>${s}</option>`).join('')}</select></div>
+        <button type="button" class="add-to-cart btn-primary w-full mt-2.5 py-2.5 text-[10px] sm:text-xs" data-add="${p.id}">Ajouter au panier</button>
+      </article>`).join('');
+      $('#resultCount').textContent=`${shown.length} article${shown.length>1?'s':''}`;
+      $('#emptyState').classList.toggle('hidden',shown.length!==0);
+      $('#productGrid').classList.toggle('hidden',shown.length===0);
+    }
+    function setFilter(filter){
+      activeFilter=filter;
+      document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+      renderProducts();
+    }
+    function showToast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
+    function addToCart(id,size='M'){
+      const p=products.find(x=>x.id===Number(id));if(!p)return;
+      const found=cart.find(x=>x.id===p.id&&x.size===size);
+      if(found)found.qty++;else cart.push({id:p.id,size,qty:1});
+      renderCart();showToast(`${p.name} ajouté au panier`);
+    }
+    function cartDetails(){return cart.map(item=>({...item,product:products.find(p=>p.id===item.id)}))}
+    function renderCart(){
+      const items=cartDetails(),count=cart.reduce((n,x)=>n+x.qty,0),total=items.reduce((n,x)=>n+x.product.price*x.qty,0);
+      $('#cartBadge').textContent=count;$('#drawerCount').textContent=`(${count})`;$('#cartTotal').textContent=money(total);$('#checkoutTotal').textContent=money(total);$('#checkoutItemsCount').textContent=count+' article(s)';$('#checkoutBtn').disabled=count===0;
+      if(!items.length){$('#cartItems').innerHTML=`<div class="h-full min-h-[260px] flex flex-col items-center justify-center text-center"><div class="text-4xl text-brass">◇</div><h3 class="serif text-2xl mt-4">Votre panier est vide</h3><p class="text-xs text-muted mt-2">Découvrez les essentiels du vestiaire DINA.</p><button id="continueShopping" class="btn-outline px-5 py-3 mt-5 text-xs">Découvrir la collection</button></div>`;$('#continueShopping').onclick=closeCart;return;}
+      $('#cartItems').innerHTML=items.map(x=>`<div class="flex gap-4 py-4 border-b border-black/10"><img src="${imgUrl(x.product.image)}" alt="" class="w-20 h-24 object-cover bg-[#e9e6dd]"><div class="flex-1 min-w-0"><div class="flex justify-between gap-2"><div><p class="text-[9px] text-muted uppercase tracking-wide">${x.product.label}</p><h3 class="text-sm mt-1">${x.product.name}</h3><p class="text-xs text-muted mt-1">Taille : ${x.size}</p></div><button class="remove-item text-lg text-muted hover:text-ink" data-id="${x.id}" data-size="${x.size}" aria-label="Supprimer ${x.product.name}">×</button></div><div class="flex items-center justify-between mt-3"><div class="flex items-center border border-black/15"><button class="qty-btn px-2.5 py-1.5" data-change="-1" data-id="${x.id}" data-size="${x.size}" aria-label="Diminuer la quantité">−</button><span class="text-xs min-w-[22px] text-center">${x.qty}</span><button class="qty-btn px-2.5 py-1.5" data-change="1" data-id="${x.id}" data-size="${x.size}" aria-label="Augmenter la quantité">+</button></div><strong class="text-xs">${money(x.product.price*x.qty)}</strong></div></div></div>`).join('');
+    }
+    function openCart(){$('#backdrop').classList.add('open');$('#cartDrawer').classList.add('open');document.body.style.overflow='hidden';$('#closeCartBtn').focus()}
+    function closeCart(){$('#backdrop').classList.remove('open');$('#cartDrawer').classList.remove('open');document.body.style.overflow=''}
+    function openCheckout(){if(!cart.length)return;closeCart();$('#checkoutModal').classList.add('open');document.body.style.overflow='hidden'}
+    function closeCheckout(){$('#checkoutModal').classList.remove('open');document.body.style.overflow=''}
+    function closeConfirmation(){$('#confirmationModal').classList.remove('open');document.body.style.overflow=''}
+    function setSearch(value){searchTerm=value.trim();$('#searchInput').value=value;$('#mobileSearchInput').value=value;$('#catalogSearch').value=value;renderProducts()}
+    $('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)setFilter(b.dataset.filter)});
+    document.addEventListener('click',e=>{
+      const add=e.target.closest('[data-add]');if(add){const id=Number(add.dataset.add);const sel=$(`#size-${id}`);addToCart(id,sel?sel.value:'M');return}
+      const nav=e.target.closest('[data-nav-filter]');if(nav){e.preventDefault();setFilter(nav.dataset.navFilter);$('#mobileMenu').classList.add('hidden');$('#collection').scrollIntoView({behavior:'smooth'});return}
+      const change=e.target.closest('[data-change]');if(change){const item=cart.find(x=>x.id===Number(change.dataset.id)&&x.size===change.dataset.size);if(item){item.qty+=Number(change.dataset.change);if(item.qty<=0)cart=cart.filter(x=>x!==item);renderCart()}return}
+      const remove=e.target.closest('.remove-item');if(remove){cart=cart.filter(x=>!(x.id===Number(remove.dataset.id)&&x.size===remove.dataset.size));renderCart()}
+    });
+    $('#searchForm').addEventListener('submit',e=>{e.preventDefault();setSearch($('#searchInput').value);$('#collection').scrollIntoView({behavior:'smooth'})});
+    $('#mobileSearchBtn').onclick=()=>{$('#mobileSearchForm').classList.toggle('hidden');if(!$('#mobileSearchForm').classList.contains('hidden'))$('#mobileSearchInput').focus()};
+    $('#mobileSearchForm').addEventListener('submit',e=>{e.preventDefault();setSearch($('#mobileSearchInput').value);$('#collection').scrollIntoView({behavior:'smooth'})});
+    $('#mobileSearchInput').addEventListener('input',e=>setSearch(e.target.value));
+    $('#catalogSearch').addEventListener('input',e=>setSearch(e.target.value));
+    $('#resetFilters').onclick=()=>{setFilter('all');setSearch('')};
+    $('#mobileMenuBtn').onclick=()=>$('#mobileMenu').classList.toggle('hidden');
+    $('#openCartBtn').onclick=openCart;$('#closeCartBtn').onclick=closeCart;$('#backdrop').onclick=closeCart;$('#checkoutBtn').onclick=openCheckout;
+    $('#closeCheckoutBtn').onclick=closeCheckout;$('#checkoutModal').addEventListener('click',e=>{if(e.target===$('#checkoutModal'))closeCheckout()});
+    $('#closeConfirmationBtn').onclick=closeConfirmation;
+    $('#wilayaSelect').innerHTML='<option value="">Choisir une wilaya</option>'+wilayas.map(w=>`<option>${w}</option>`).join('');
+    $('#checkoutForm').addEventListener('submit',e=>{
+      e.preventDefault();if(!cart.length)return;
+      const form=new FormData(e.currentTarget),items=cartDetails(),total=items.reduce((n,x)=>n+x.product.price*x.qty,0);
+      const orderId='DINA-'+Date.now().toString().slice(-7);
+      $('#confirmationText').textContent=`Merci ${form.get('name')}. Votre commande de démonstration ${orderId} a été préparée. Pour finaliser un achat réel, contactez DINA au 05 51 75 01 97.`;
+      $('#orderSummary').innerHTML=`<p><strong>Référence :</strong> ${orderId}</p><p><strong>Client :</strong> ${escapeHTML(form.get('name'))}</p><p><strong>Téléphone :</strong> ${escapeHTML(form.get('phone'))}</p><p><strong>Wilaya :</strong> ${escapeHTML(form.get('wilaya'))}</p><p><strong>Adresse :</strong> ${escapeHTML(form.get('address'))}</p><p><strong>Articles :</strong> ${items.map(x=>`${escapeHTML(x.product.name)} (${x.size}) × ${x.qty}`).join(', ')}</p><p class="mt-2 pt-2 border-t border-black/10"><strong>Total articles : ${money(total)}</strong></p>`;
+      closeCheckout();cart=[];renderCart();$('#confirmationModal').classList.add('open');document.body.style.overflow='hidden';e.currentTarget.reset();
+    });
+    function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    $('#legalLink').onclick=e=>{e.preventDefault();showToast('Ajoutez ici les mentions légales officielles de DINA.')};
+    $('#privacyLink').onclick=e=>{e.preventDefault();showToast('Ajoutez ici la politique de confidentialité officielle de DINA.')};
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeCart();closeCheckout();closeConfirmation();$('#mobileMenu').classList.add('hidden')}});
+    $('#year').textContent=new Date().getFullYear();
+    renderProducts();renderCart();
+  </script>
+</body>
+</html>
